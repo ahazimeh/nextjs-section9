@@ -6,12 +6,12 @@ async function handler(req, res) {
             res.status(422).json({ message: 'Invalid email address.' })
             return;
         }
-        const adminPassword = encodeURIComponent("12[]aszsa")
-        let url = `mongodb+srv://root:${adminPassword}@cluster0.svlvw.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
+        const adminPassword = encodeURIComponent(process.env.password)
+        let url = `mongodb+srv://root:${adminPassword}@cluster0.svlvw.mongodb.net/events?retryWrites=true&w=majority`;
 
         const client = await MongoClient.connect(url)
         const db = client.db();
-        await db.collection('emails').insertOne({ email: userEmail });
+        await db.collection('newsletter').insertOne({ email: userEmail });
 
         client.close()
 

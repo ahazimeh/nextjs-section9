@@ -1,5 +1,10 @@
-function handler(req, res) {
+import { MongoClient } from "mongodb";
+async function handler(req, res) {
     const eventId = req.query.eventId;
+    const adminPassword = encodeURIComponent(process.env.password)
+    let url = `mongodb+srv://root:${adminPassword}@cluster0.svlvw.mongodb.net/events?retryWrites=true&w=majority`;
+
+    const client = await MongoClient.connect(url)
     if (req.method === 'POST') {
         const { email, name, text } = req.body;
         console.log(req.body)
@@ -13,12 +18,19 @@ function handler(req, res) {
             return;
         }
         const newComment = {
-            id: new Date().toISOString(),
+            // id: new Date().toISOString(),
             email,
             name,
-            text
+            text,
+            eventId
         }
-        console.log(newComment);
+
+        const db = client.db()
+
+        const result = await db.collection('comments').insertOne(newComment);
+
+        console.log(result);
+        newComment.id = result.insertedId;
         res.status(201).json({ message: 'Added comment.', comment: newComment });
     }
     else if (req.method === 'GET') {
@@ -28,5 +40,6 @@ function handler(req, res) {
         ]
         res.status(200).json({ comments: dummyList })
     }
+    client.close()
 }
 export default handler;
