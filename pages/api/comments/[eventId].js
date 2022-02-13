@@ -1,4 +1,5 @@
 import { MongoClient } from "mongodb";
+import { connectDatabase, insertDocument } from "../../../helpers/db-util"
 async function handler(req, res) {
     const eventId = req.query.eventId;
     const adminPassword = encodeURIComponent(process.env.password)

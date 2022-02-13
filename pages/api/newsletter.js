@@ -1,16 +1,17 @@
 import { MongoClient } from "mongodb";
-async function connectDatabase() {
-    const adminPassword = encodeURIComponent(process.env.password)
-    let url = `mongodb+srv://root:${adminPassword}@cluster0.svlvw.mongodb.net/events?retryWrites=true&w=majority`;
+import { connectDatabase, insertDocument } from "../../helpers/db-util";
+// async function connectDatabase() {
+//     const adminPassword = encodeURIComponent(process.env.password)
+//     let url = `mongodb+srv://root:${adminPassword}@cluster0.svlvw.mongodb.net/events?retryWrites=true&w=majority`;
 
-    const client = await MongoClient.connect(url)
-    return client;
-}
+//     const client = await MongoClient.connect(url)
+//     return client;
+// }
 
-async function insertDocument(client, document) {
-    const db = client.db();
-    await db.collection('newsletter').insertOne(document);
-}
+// async function insertDocument(client, document) {
+//     const db = client.db();
+//     await db.collection('newsletter').insertOne(document);
+// }
 async function handler(req, res) {
     if (req.method === 'POST') {
         const userEmail = req.body.email;
@@ -31,7 +32,7 @@ async function handler(req, res) {
             return
         }
         try {
-            await insertDocument(client, { email: userEmail })
+            await insertDocument(client, 'newsletter', { email: userEmail })
             client.close()
         }
         catch (err) {
